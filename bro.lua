@@ -72,10 +72,10 @@ local drag = function(obj, latency)
 end
 
 local library = {
-    version = "2.0.2",
-    title = title or "xsx " .. tostring(math.random(1,366)),
+    version = "1.0.0",
+    title = title or "catware " .. tostring(math.random(1,366)),
     fps = 0,
-    rank = "private"
+    rank = "kitty"
 }
 
 coroutine.wrap(function()
@@ -182,12 +182,6 @@ function library:GetYear(type)
     end
 end
 
-function library:UnlockFps(new) -- syn only
-    if syn then
-        setfpscap(new)
-    end
-end
-
 function library:Watermark(text)
     for i,v in pairs(CoreGuiService:GetChildren()) do
         if v.Name == "watermark" then
@@ -195,7 +189,7 @@ function library:Watermark(text)
         end
     end
 
-    tetx = text or "xsx v2"
+    tetx = text or "catware"
 
     local watermark = Instance.new("ScreenGui")
     local watermarkPadding = Instance.new("UIPadding")
@@ -319,7 +313,7 @@ function library:Watermark(text)
 
     local WatermarkFunctions = {}
     function WatermarkFunctions:AddWatermark(text)
-        tetx = text or "xsx v2"
+        tetx = text or "catware"
 
         local edge = Instance.new("Frame")
         local edgeCorner = Instance.new("UICorner")
@@ -669,7 +663,7 @@ end
 
 function library:Introduction()
     for _,v in next, CoreGuiService:GetChildren() do
-        if v.Name == "screen" then
+        if v.Name == "introduction" then
             v:Destroy()
         end
     end
@@ -685,10 +679,12 @@ function library:Introduction()
     local bar = Instance.new("Frame")
     local barCorner = Instance.new("UICorner")
     local barLayout = Instance.new("UIListLayout")
-    local xsxLogo = Instance.new("ImageLabel")
-    local hashLogo = Instance.new("ImageLabel")
-    local xsx = Instance.new("TextLabel")
     local text = Instance.new("TextLabel")
+    local progressBarEdge = Instance.new("Frame")
+    local progressBarEdgeCorner = Instance.new("UICorner")
+    local progressBar = Instance.new("Frame")
+    local progressBarCorner = Instance.new("UICorner")
+    local progressBarGradient = Instance.new("UIGradient")
     local pageLayout = Instance.new("UIListLayout")
     
     introduction.Name = "introduction"
@@ -700,8 +696,8 @@ function library:Introduction()
     edge.AnchorPoint = Vector2.new(0.5, 0.5)
     edge.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     edge.BackgroundTransparency = 1
-    edge.Position = UDim2.new(0.511773348, 0, 0.5, 0)
-    edge.Size = UDim2.new(0, 300, 0, 308)
+    edge.Position = UDim2.new(0.5, 0, 0.5, 0)
+    edge.Size = UDim2.new(0, 220, 0, 120)
     
     edgeCorner.CornerRadius = UDim.new(0, 2)
     edgeCorner.Name = "edgeCorner"
@@ -714,7 +710,7 @@ function library:Introduction()
     background.BackgroundTransparency = 1
     background.ClipsDescendants = true
     background.Position = UDim2.new(0.5, 0, 0.5, 0)
-    background.Size = UDim2.new(0, 298, 0, 306)
+    background.Size = UDim2.new(0, 218, 0, 118)
     
     backgroundGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(34, 34, 34)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(28, 28, 28))}
     backgroundGradient.Rotation = 90
@@ -743,53 +739,47 @@ function library:Introduction()
     barLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     barLayout.SortOrder = Enum.SortOrder.LayoutOrder
     
-    xsxLogo.Name = "xsxLogo"
-    xsxLogo.Parent = background
-    xsxLogo.AnchorPoint = Vector2.new(0.5, 0.5)
-    xsxLogo.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    xsxLogo.BackgroundTransparency = 1.000
-    xsxLogo.Position = UDim2.new(0.5, 0, 0.5, 0)
-    xsxLogo.Size = UDim2.new(0, 448, 0, 150)
-    xsxLogo.Visible = true
-    xsxLogo.Image = "http://www.roblox.com/asset/?id=9365068051"
-    xsxLogo.ImageColor3 = Color3.fromRGB(159, 115, 255)
-    xsxLogo.ImageTransparency = 1
-    
-    hashLogo.Name = "hashLogo"
-    hashLogo.Parent = background
-    hashLogo.AnchorPoint = Vector2.new(0.5, 0.5)
-    hashLogo.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    hashLogo.BackgroundTransparency = 1.000
-    hashLogo.Position = UDim2.new(0.5, 0, 0.5, 0)
-    hashLogo.Size = UDim2.new(0, 150, 0, 150)
-    hashLogo.Visible = true
-    hashLogo.Image = "http://www.roblox.com/asset/?id=9365069861"
-    hashLogo.ImageColor3 = Color3.fromRGB(159, 115, 255)
-    hashLogo.ImageTransparency = 1
-    
-    xsx.Name = "xsx"
-    xsx.Parent = background
-    xsx.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    xsx.BackgroundTransparency = 1.000
-    xsx.Size = UDim2.new(0, 80, 0, 21)
-    xsx.Font = Enum.Font.Code
-    xsx.Text = "powered by xsx"
-    xsx.TextColor3 = Color3.fromRGB(124, 124, 124)
-    xsx.TextSize = 10.000
-    xsx.TextTransparency = 1
-    
     text.Name = "text"
     text.Parent = background
     text.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     text.BackgroundTransparency = 1.000
-    text.Position = UDim2.new(0.912751675, 0, 0, 0)
-    text.Size = UDim2.new(0, 26, 0, 21)
+    text.Position = UDim2.new(0.5, 0, 0.3, 0)
+    text.Size = UDim2.new(0, 200, 0, 30)
+    text.AnchorPoint = Vector2.new(0.5, 0.5)
     text.Font = Enum.Font.Code
-    text.Text = "hash"
-    text.TextColor3 = Color3.fromRGB(124, 124, 124)
-    text.TextSize = 10.000
+    text.Text = "CatUI"
+    text.TextColor3 = Color3.fromRGB(159, 115, 255)
+    text.TextSize = 24.000
     text.TextTransparency = 1
     text.RichText = true
+
+    progressBarEdge.Name = "progressBarEdge"
+    progressBarEdge.Parent = background
+    progressBarEdge.AnchorPoint = Vector2.new(0.5, 0.5)
+    progressBarEdge.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    progressBarEdge.Position = UDim2.new(0.5, 0, 0.7, 0)
+    progressBarEdge.Size = UDim2.new(0, 182, 0, 22)
+
+    progressBarEdgeCorner.CornerRadius = UDim.new(0, 2)
+    progressBarEdgeCorner.Name = "progressBarEdgeCorner"
+    progressBarEdgeCorner.Parent = progressBarEdge
+
+    progressBar.Name = "progressBar"
+    progressBar.Parent = progressBarEdge
+    progressBar.AnchorPoint = Vector2.new(0.5, 0.5)
+    progressBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    progressBar.Position = UDim2.new(0.5, 0, 0.5, 0)
+    progressBar.Size = UDim2.new(0, 0, 0, 20)
+    progressBar.ClipsDescendants = true
+
+    progressBarCorner.CornerRadius = UDim.new(0, 2)
+    progressBarCorner.Name = "progressBarCorner"
+    progressBarCorner.Parent = progressBar
+
+    progressBarGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(159, 115, 255)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(128, 94, 208))}
+    progressBarGradient.Rotation = 90
+    progressBarGradient.Name = "progressBarGradient"
+    progressBarGradient.Parent = progressBar
     
     pageLayout.Name = "pageLayout"
     pageLayout.Parent = introduction
@@ -797,34 +787,21 @@ function library:Introduction()
     pageLayout.SortOrder = Enum.SortOrder.LayoutOrder
     pageLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 
-    CreateTween("xsxRotation", 0)
-    local MinusAmount = -16
-    coroutine.wrap(function()
-        while wait() do
-            MinusAmount = MinusAmount + 0.4
-            TweenService:Create(xsxLogo, TweenTable["xsxRotation"], {Rotation = xsxLogo.Rotation - MinusAmount}):Play()
-        end
-    end)()
-
+    CreateTween("loading_progress", 2.5, Enum.EasingStyle.Quad)
+    
     TweenService:Create(edge, TweenTable["introduction"], {BackgroundTransparency = 0}):Play()
     TweenService:Create(background, TweenTable["introduction"], {BackgroundTransparency = 0}):Play()
     wait(.2)
-    TweenService:Create(bar, TweenTable["introduction"], {Size = UDim2.new(0, 298, 0, 1)}):Play()
+    TweenService:Create(bar, TweenTable["introduction"], {Size = UDim2.new(0, 218, 0, 1)}):Play()
     wait(.2)
-    TweenService:Create(xsx, TweenTable["introduction"], {TextTransparency = 0}):Play()
     TweenService:Create(text, TweenTable["introduction"], {TextTransparency = 0}):Play()
     wait(.3)
-    TweenService:Create(xsxLogo, TweenTable["introduction"], {ImageTransparency = 0}):Play()
-    wait(2)
-    TweenService:Create(xsxLogo, TweenTable["introduction"], {ImageTransparency = 1}):Play()
-    wait(.2)
-    TweenService:Create(hashLogo, TweenTable["introduction"], {ImageTransparency = 0}):Play()
-    wait(2)
-    TweenService:Create(hashLogo, TweenTable["introduction"], {ImageTransparency = 1}):Play()
+    TweenService:Create(progressBar, TweenTable["loading_progress"], {Size = UDim2.new(0, 180, 0, 20)}):Play()
+    wait(2.6)
+    TweenService:Create(progressBar, TweenTable["introduction"], {BackgroundTransparency = 1}):Play()
+    TweenService:Create(progressBarEdge, TweenTable["introduction"], {BackgroundTransparency = 1}):Play()
     wait(.1)
     TweenService:Create(text, TweenTable["introduction"], {TextTransparency = 1}):Play()
-    wait(.1)
-    TweenService:Create(xsx, TweenTable["introduction"], {TextTransparency = 1}):Play()
     wait(.1)
     TweenService:Create(bar, TweenTable["introduction"], {Size = UDim2.new(0, 0, 0, 1)}):Play()
     wait(.1)
