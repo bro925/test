@@ -787,11 +787,12 @@ function library:Introduction()
     loadingText.Size = UDim2.new(0, 200, 0, 15)
     loadingText.AnchorPoint = Vector2.new(0.5, 0.5)
     loadingText.Font = Enum.Font.Code
-    loadingText.Text = "Initializing..."
+    loadingText.Text = ""
     loadingText.TextColor3 = Color3.fromRGB(140, 140, 140)
     loadingText.TextSize = 12.000
     loadingText.TextTransparency = 1
     loadingText.RichText = true
+    loadingText.Visible = false
     
     pageLayout.Name = "pageLayout"
     pageLayout.Parent = introduction
@@ -818,7 +819,6 @@ function library:Introduction()
     TweenService:Create(bar, TweenTable["introduction"], {Size = UDim2.new(0, 218, 0, 1)}):Play()
     wait(.2)
     TweenService:Create(text, TweenTable["introduction"], {TextTransparency = 0}):Play()
-    TweenService:Create(loadingText, TweenTable["introduction"], {TextTransparency = 0}):Play()
     wait(.3)
     
     _G.UpdateProgress(0, "Initializing...")
@@ -828,7 +828,6 @@ function library:Introduction()
     wait(0.3)
     TweenService:Create(progressBar, TweenTable["loading_fade"], {BackgroundTransparency = 1}):Play()
     TweenService:Create(progressBarEdge, TweenTable["loading_fade"], {BackgroundTransparency = 1}):Play()
-    TweenService:Create(loadingText, TweenTable["loading_fade"], {TextTransparency = 1}):Play()
     wait(.1)
     TweenService:Create(text, TweenTable["loading_fade"], {TextTransparency = 1}):Play()
     wait(.1)
