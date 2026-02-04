@@ -685,7 +685,6 @@ function library:Introduction()
     local progressBar = Instance.new("Frame")
     local progressBarCorner = Instance.new("UICorner")
     local progressBarGradient = Instance.new("UIGradient")
-    local loadingText = Instance.new("TextLabel")
     local pageLayout = Instance.new("UIListLayout")
     
     introduction.Name = "intro"
@@ -779,35 +778,18 @@ function library:Introduction()
     progressBarGradient.Rotation = 90
     progressBarGradient.Name = "progressBarGradient"
     progressBarGradient.Parent = progressBar
-
-    loadingText.Name = "loadingText"
-    loadingText.Parent = background
-    loadingText.BackgroundTransparency = 1
-    loadingText.Position = UDim2.new(0.5, 0, 0.82, 0)
-    loadingText.Size = UDim2.new(0, 200, 0, 15)
-    loadingText.AnchorPoint = Vector2.new(0.5, 0.5)
-    loadingText.Font = Enum.Font.Code
-    loadingText.Text = ""
-    loadingText.TextColor3 = Color3.fromRGB(140, 140, 140)
-    loadingText.TextSize = 12.000
-    loadingText.TextTransparency = 1
-    loadingText.RichText = true
-    loadingText.Visible = false
-    
     pageLayout.Name = "pageLayout"
     pageLayout.Parent = introduction
     pageLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     pageLayout.SortOrder = Enum.SortOrder.LayoutOrder
     pageLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 
-    _G.UpdateProgress = function(progress, loadText)
+    _G.UpdateProgress = function(progress)
         progress = math.clamp(progress or 0, 0, 100)
-        loadText = loadText or "Loading..."
         local targetWidth = (180 / 100) * progress
         
         CreateTween("progress_update", 0.3, Enum.EasingStyle.Quad)
         TweenService:Create(progressBar, TweenTable["progress_update"], {Size = UDim2.new(0, targetWidth, 0, 20)}):Play()
-        loadingText.Text = loadText
     end
 
     CreateTween("loading_fade", 0.2)
@@ -821,7 +803,7 @@ function library:Introduction()
     TweenService:Create(text, TweenTable["introduction"], {TextTransparency = 0}):Play()
     wait(.3)
     
-    _G.UpdateProgress(0, "Initializing...")
+    _G.UpdateProgress(0)
     
     repeat wait(0.1) until _G.Complete
     
@@ -854,7 +836,7 @@ function library:Init(key)
         end
     end
     
-    updateProgress(10, "Creating UI...")
+    updateProgress(10)
     
     for _,v in next, CoreGuiService:GetChildren() do
         if v.Name == "screen" then
@@ -907,7 +889,7 @@ function library:Init(key)
     screen.Name = "screen"
     screen.Parent = CoreGuiService
     screen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    updateProgress(15, "Building frame...")
+    updateProgress(15)
 
     edge.Name = "edge"
     edge.Parent = screen
@@ -927,7 +909,7 @@ function library:Init(key)
     edgeCorner.CornerRadius = UDim.new(0, 2)
     edgeCorner.Name = "edgeCorner"
     edgeCorner.Parent = edge
-    updateProgress(15, "Setting up layout...")
+    updateProgress(15)
 
     background.Name = "background"
     background.Parent = edge
@@ -940,7 +922,7 @@ function library:Init(key)
     backgroundCorner.CornerRadius = UDim.new(0, 2)
     backgroundCorner.Name = "backgroundCorner"
     backgroundCorner.Parent = background
-    updateProgress(15, "Configuring theme...")
+    updateProgress(15)
 
     backgroundGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(34, 34, 34)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(28, 28, 28))}
     backgroundGradient.Rotation = 90
@@ -965,7 +947,7 @@ function library:Init(key)
     headerPadding.PaddingLeft = UDim.new(0, 12)
     headerPadding.PaddingRight = UDim.new(0, 6)
     headerPadding.PaddingTop = UDim.new(0, 6)
-    updateProgress(10, "Adding controls...")
+    updateProgress(10)
 
     -- Control Buttons
     controlButtonsFrame.Name = "controlButtonsFrame"
@@ -1172,7 +1154,7 @@ function library:Init(key)
     tabButtonPadding.PaddingLeft = UDim.new(0, 4)
     tabButtonPadding.PaddingRight = UDim.new(0, 4)
     tabButtonPadding.PaddingTop = UDim.new(0, 4)
-    updateProgress(15, "Preparing tabs...")
+    updateProgress(15)
 
     containerEdge.Name = "containerEdge"
     containerEdge.Parent = background
@@ -1200,9 +1182,7 @@ function library:Init(key)
     containerGradient.Rotation = 90
     containerGradient.Name = "containerGradient"
     containerGradient.Parent = container
-    updateProgress(10, "Finalizing...")
-
-    updateProgress(10, "Complete!")
+    updateProgress(10)
     wait(0.1)
     _G.Complete = true
     
