@@ -116,12 +116,6 @@ function library:Rejoin()
     TeleportService:TeleportToPlaceInstance(library:GetPlaceId(), library:GetJobId(), library:GetUserId())
 end
 
-function library:Copy(input) -- only works with synapse
-    if syn then
-        syn.write_clipboard(input)
-    end
-end
-
 function library:GetDay(type)
     if type == "word" then -- day in a full word
         return os.date("%A")
