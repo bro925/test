@@ -3459,19 +3459,9 @@ function library:Init(key)
             sliderValue.Position = UDim2.new(0.577319562, 0, 0, 0)
             sliderValue.Size = UDim2.new(0, 169, 0, 15)
             sliderValue.Font = Enum.Font.Code
-            sliderValue.Text = values.default
             sliderValue.TextColor3 = Color3.fromRGB(140, 140, 140)
             sliderValue.TextSize = 14.000
             sliderValue.TextXAlignment = Enum.TextXAlignment.Right
-
-
-            local calc1 = values.max - values.min
-            local calc2 = values.default - values.min
-            local calc3 = calc2 / calc1
-            local calc4 = calc3 * sliderBackground.AbsoluteSize.X
-            local Calculation = calc4
-            sliderIndicator.Size = UDim2.new(0, Calculation, 0, 12)
-            sliderValue.Text = values.default
 
             CreateTween("slider_drag", 0.008)
 
@@ -3481,7 +3471,10 @@ function library:Init(key)
             task.wait()
 
             local function percentFromValue(val)
-                return (val - values.min) / (values.max - values.min)
+                return math.clamp(
+                    (val - values.min) / (values.max - values.min),
+                    0, 1
+                )
             end
 
             local function valueFromMouse()
@@ -3584,7 +3577,6 @@ function library:Init(key)
             UpdatePageSize()
 
             return SliderFunctions
-        end
         end
         --
         function Components:NewSeperator()
