@@ -890,6 +890,20 @@ function library:Init(key)
     local container = Instance.new("Frame")
     local containerCorner = Instance.new("UICorner")
     local containerGradient = Instance.new("UIGradient")
+    local controlButtonsFrame = Instance.new("Frame")
+    local controlButtonsLayout = Instance.new("UIListLayout")
+    local minimizeButton = Instance.new("TextButton")
+    local minimizeButtonCorner = Instance.new("UICorner")
+    local minimizeButtonBackground = Instance.new("Frame")
+    local minimizeButtonBackgroundCorner = Instance.new("UICorner")
+    local minimizeButtonGradient = Instance.new("UIGradient")
+    local minimizeButtonLabel = Instance.new("TextLabel")
+    local closeButton = Instance.new("TextButton")
+    local closeButtonCorner = Instance.new("UICorner")
+    local closeButtonBackground = Instance.new("Frame")
+    local closeButtonBackgroundCorner = Instance.new("UICorner")
+    local closeButtonGradient = Instance.new("UIGradient")
+    local closeButtonLabel = Instance.new("TextLabel")
 
     screen.Name = "screen"
     screen.Parent = CoreGuiService
@@ -953,6 +967,153 @@ function library:Init(key)
     headerPadding.PaddingRight = UDim.new(0, 6)
     headerPadding.PaddingTop = UDim.new(0, 6)
     updateProgress(10, "Adding controls...")
+
+    -- Control Buttons
+    controlButtonsFrame.Name = "controlButtonsFrame"
+    controlButtonsFrame.Parent = background
+    controlButtonsFrame.BackgroundTransparency = 1
+    controlButtonsFrame.Position = UDim2.new(1, -80, 0, 0)
+    controlButtonsFrame.Size = UDim2.new(0, 76, 0, 38)
+
+    controlButtonsLayout.Name = "controlButtonsLayout"
+    controlButtonsLayout.Parent = controlButtonsFrame
+    controlButtonsLayout.FillDirection = Enum.FillDirection.Horizontal
+    controlButtonsLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+    controlButtonsLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    controlButtonsLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+    controlButtonsLayout.Padding = UDim.new(0, 4)
+
+    -- Minimize Button
+    minimizeButton.Name = "minimizeButton"
+    minimizeButton.Parent = controlButtonsFrame
+    minimizeButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    minimizeButton.Size = UDim2.new(0, 18, 0, 18)
+    minimizeButton.AutoButtonColor = false
+    minimizeButton.Font = Enum.Font.SourceSans
+    minimizeButton.Text = ""
+    minimizeButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+    minimizeButton.TextSize = 14.000
+
+    minimizeButtonCorner.CornerRadius = UDim.new(0, 2)
+    minimizeButtonCorner.Name = "minimizeButtonCorner"
+    minimizeButtonCorner.Parent = minimizeButton
+
+    minimizeButtonBackground.Name = "minimizeButtonBackground"
+    minimizeButtonBackground.Parent = minimizeButton
+    minimizeButtonBackground.AnchorPoint = Vector2.new(0.5, 0.5)
+    minimizeButtonBackground.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    minimizeButtonBackground.Position = UDim2.new(0.5, 0, 0.5, 0)
+    minimizeButtonBackground.Size = UDim2.new(0, 16, 0, 16)
+
+    minimizeButtonBackgroundCorner.CornerRadius = UDim.new(0, 2)
+    minimizeButtonBackgroundCorner.Name = "minimizeButtonBackgroundCorner"
+    minimizeButtonBackgroundCorner.Parent = minimizeButtonBackground
+
+    minimizeButtonGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(34, 34, 34)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(28, 28, 28))}
+    minimizeButtonGradient.Rotation = 90
+    minimizeButtonGradient.Name = "minimizeButtonGradient"
+    minimizeButtonGradient.Parent = minimizeButtonBackground
+
+    minimizeButtonLabel.Name = "minimizeButtonLabel"
+    minimizeButtonLabel.Parent = minimizeButtonBackground
+    minimizeButtonLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+    minimizeButtonLabel.BackgroundTransparency = 1
+    minimizeButtonLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+    minimizeButtonLabel.Size = UDim2.new(0, 16, 0, 16)
+    minimizeButtonLabel.Font = Enum.Font.Code
+    minimizeButtonLabel.Text = "-"
+    minimizeButtonLabel.TextColor3 = Color3.fromRGB(190, 190, 190)
+    minimizeButtonLabel.TextSize = 16.000
+
+    -- Close Button
+    closeButton.Name = "closeButton"
+    closeButton.Parent = controlButtonsFrame
+    closeButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    closeButton.Size = UDim2.new(0, 18, 0, 18)
+    closeButton.AutoButtonColor = false
+    closeButton.Font = Enum.Font.SourceSans
+    closeButton.Text = ""
+    closeButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+    closeButton.TextSize = 14.000
+
+    closeButtonCorner.CornerRadius = UDim.new(0, 2)
+    closeButtonCorner.Name = "closeButtonCorner"
+    closeButtonCorner.Parent = closeButton
+
+    closeButtonBackground.Name = "closeButtonBackground"
+    closeButtonBackground.Parent = closeButton
+    closeButtonBackground.AnchorPoint = Vector2.new(0.5, 0.5)
+    closeButtonBackground.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    closeButtonBackground.Position = UDim2.new(0.5, 0, 0.5, 0)
+    closeButtonBackground.Size = UDim2.new(0, 16, 0, 16)
+
+    closeButtonBackgroundCorner.CornerRadius = UDim.new(0, 2)
+    closeButtonBackgroundCorner.Name = "closeButtonBackgroundCorner"
+    closeButtonBackgroundCorner.Parent = closeButtonBackground
+
+    closeButtonGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(34, 34, 34)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(28, 28, 28))}
+    closeButtonGradient.Rotation = 90
+    closeButtonGradient.Name = "closeButtonGradient"
+    closeButtonGradient.Parent = closeButtonBackground
+
+    closeButtonLabel.Name = "closeButtonLabel"
+    closeButtonLabel.Parent = closeButtonBackground
+    closeButtonLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+    closeButtonLabel.BackgroundTransparency = 1
+    closeButtonLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+    closeButtonLabel.Size = UDim2.new(0, 16, 0, 16)
+    closeButtonLabel.Font = Enum.Font.Code
+    closeButtonLabel.Text = "X"
+    closeButtonLabel.TextColor3 = Color3.fromRGB(190, 190, 190)
+    closeButtonLabel.TextSize = 14.000
+
+    CreateTween("button_hover", 0.16)
+    
+    -- Minimize Button Hover
+    minimizeButton.MouseEnter:Connect(function()
+        TweenService:Create(minimizeButtonGradient, TweenTable["button_hover"], {
+            Color = ColorSequence.new{
+                ColorSequenceKeypoint.new(0.00, Color3.fromRGB(80, 80, 80)), 
+                ColorSequenceKeypoint.new(1.00, Color3.fromRGB(60, 60, 60))
+            }
+        }):Play()
+    end)
+    
+    minimizeButton.MouseLeave:Connect(function()
+        TweenService:Create(minimizeButtonGradient, TweenTable["button_hover"], {
+            Color = ColorSequence.new{
+                ColorSequenceKeypoint.new(0.00, Color3.fromRGB(34, 34, 34)), 
+                ColorSequenceKeypoint.new(1.00, Color3.fromRGB(28, 28, 28))
+            }
+        }):Play()
+    end)
+
+    minimizeButton.MouseButton1Click:Connect(function()
+        edge.Visible = false
+    end)
+
+    -- Close Button Hover
+    closeButton.MouseEnter:Connect(function()
+        TweenService:Create(closeButtonGradient, TweenTable["button_hover"], {
+            Color = ColorSequence.new{
+                ColorSequenceKeypoint.new(0.00, Color3.fromRGB(200, 50, 50)), 
+                ColorSequenceKeypoint.new(1.00, Color3.fromRGB(150, 30, 30))
+            }
+        }):Play()
+    end)
+    
+    closeButton.MouseLeave:Connect(function()
+        TweenService:Create(closeButtonGradient, TweenTable["button_hover"], {
+            Color = ColorSequence.new{
+                ColorSequenceKeypoint.new(0.00, Color3.fromRGB(34, 34, 34)), 
+                ColorSequenceKeypoint.new(1.00, Color3.fromRGB(28, 28, 28))
+            }
+        }):Play()
+    end)
+
+    closeButton.MouseButton1Click:Connect(function()
+        screen:Destroy()
+    end)
 
     barFolder.Name = "barFolder"
     barFolder.Parent = background
@@ -1042,6 +1203,10 @@ function library:Init(key)
     containerGradient.Parent = container
     updateProgress(10, "Finalizing...")
 
+    updateProgress(10, "Complete!")
+    wait(0.1)
+    _G.Complete = true
+    
     local TabLibrary = {
         IsFirst = true,
         CurrentTab = ""
@@ -3594,9 +3759,6 @@ function library:Init(key)
         key = new
         return TabLibrary
     end
-    updateProgress(10, "Complete!")
-    wait(0.1)
-    _G.Complete = true
     return TabLibrary
 end
 return library
