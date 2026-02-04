@@ -3463,8 +3463,6 @@ function library:Init(key)
             sliderValue.TextSize = 14.000
             sliderValue.TextXAlignment = Enum.TextXAlignment.Right
 
-            CreateTween("slider_drag", 0.008)
-
             local ValueNum = values.default
             local dragging = false
 
