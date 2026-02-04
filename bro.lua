@@ -3325,7 +3325,7 @@ function library:Init(key)
             }
             callback = callback or function() end
 
-            values.max = values.max + 1
+            --values.max = values.max + 1
 
             local sliderFrame = Instance.new("Frame")
             local sliderFolder = Instance.new("Folder")
