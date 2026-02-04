@@ -3318,14 +3318,13 @@ function library:Init(key)
             suffix = suffix or ""
             compare = compare or false
             compareSign = compareSign or "/"
-            values = values or {
-                min = values.min or 0,
-                max = values.max or 100,
-                default = values.default or 0
-            }
             callback = callback or function() end
 
-            values.max = values.max + 1
+            values = values or {}
+            values.min = values.min or 0
+            values.max = values.max or 100
+            values.default = values.default or values.min
+            callback = callback or function() end
 
             local sliderFrame = Instance.new("Frame")
             local sliderFolder = Instance.new("Folder")
@@ -3477,117 +3476,115 @@ function library:Init(key)
             CreateTween("slider_drag", 0.008)
 
             local ValueNum = values.default
-            local slideText = compare and ValueNum .. compareSign .. tostring(values.max - 1) .. suffix or ValueNum .. suffix
-            sliderValue.Text = slideText
-            local function UpdateSlider()
-                TweenService:Create(sliderIndicator, TweenTable["slider_drag"], {Size = UDim2.new(0, math.clamp(Mouse.X - sliderIndicator.AbsolutePosition.X, 0, sliderBackground.AbsoluteSize.X), 0, 12)}):Play()
+            local dragging = false
 
-                ValueNum = math.floor((((tonumber(values.max) - tonumber(values.min)) / sliderBackground.AbsoluteSize.X) * sliderIndicator.AbsoluteSize.X) + tonumber(values.min)) or 0.00
+            task.wait()
 
-                local slideText = compare and ValueNum .. compareSign .. tostring(values.max - 1) .. suffix or ValueNum .. suffix
+            local function percentFromValue(val)
+                return (val - values.min) / (values.max - values.min)
+            end
+
+            local function valueFromMouse()
+                local percent = math.clamp(
+                    (Mouse.X - sliderBackground.AbsolutePosition.X) /
+                    sliderBackground.AbsoluteSize.X,
+                    0, 1
+                )
+
+                local value = math.floor(
+                    values.min + (values.max - values.min) * percent + 0.5
+                )
+
+                return value, percent
+            end
+
+            local function render(val)
+                local percent = percentFromValue(val)
+                sliderIndicator.Size = UDim2.new(percent, 0, 0, 12)
+
+                local slideText = compare
+                    and (val .. compareSign .. values.max .. suffix)
+                    or (val .. suffix)
 
                 sliderValue.Text = slideText
+            end
 
-                pcall(function()
-                    callback(ValueNum)
-                end)
+            -- initial render
+            render(ValueNum)
 
-                sliderValue.Text = slideText
-
-                moveconnection = Mouse.Move:Connect(function()
-                    ValueNum = math.floor((((tonumber(values.max) - tonumber(values.min)) / sliderBackground.AbsoluteSize.X) * sliderIndicator.AbsoluteSize.X) + tonumber(values.min))
-                    
-                    slideText = compare and ValueNum .. compareSign .. tostring(values.max - 1) .. suffix or ValueNum .. suffix
-                    sliderValue.Text = slideText
-
-                    pcall(function()
-                        callback(ValueNum)
-                    end)
-
-                    TweenService:Create(sliderIndicator, TweenTable["slider_drag"], {Size = UDim2.new(0, math.clamp(Mouse.X - sliderIndicator.AbsolutePosition.X, 0, sliderBackground.AbsoluteSize.X), 0, 12)}):Play()
-                    if not UserInputService.WindowFocused then
-                        moveconnection:Disconnect()
-                    end
-                end)
-
-                releaseconnection = UserInputService.InputEnded:Connect(function(Mouse_2)
-                    if Mouse_2.UserInputType == Enum.UserInputType.MouseButton1 then
-                        ValueNum = math.floor((((tonumber(values.max) - tonumber(values.min)) / sliderBackground.AbsoluteSize.X) * sliderIndicator.AbsoluteSize.X) + tonumber(values.min))
-                        
-                        slideText = compare and ValueNum .. compareSign .. tostring(values.max - 1) .. suffix or ValueNum .. suffix
-                        sliderValue.Text = slideText
-
-                        pcall(function()
-                            callback(ValueNum)
-                        end)
-
-                        TweenService:Create(sliderIndicator, TweenTable["slider_drag"], {Size = UDim2.new(0, math.clamp(Mouse.X - sliderIndicator.AbsolutePosition.X, 0, sliderBackground.AbsoluteSize.X), 0, 12)}):Play()
-                        moveconnection:Disconnect()
-                        releaseconnection:Disconnect()
-                    end
-                end)
+            local function update()
+                local val, percent = valueFromMouse()
+                ValueNum = val
+                render(val)
+                callback(val)
             end
 
             sliderButton.MouseButton1Down:Connect(function()
-                UpdateSlider()
+                dragging = true
+                update()
             end)
 
-            UpdatePageSize()
+            Mouse.Move:Connect(function()
+                if dragging then
+                    update()
+                end
+            end)
+
+            UserInputService.InputEnded:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    dragging = false
+                end
+            end)
 
             local SliderFunctions = {}
+
             function SliderFunctions:Value(new)
-                local ncalc1 = new - values.min
-                local ncalc2 = ncalc1 / calc1
-                local ncalc3 = ncalc2 * sliderBackground.AbsoluteSize.X
-                local nCalculation = ncalc3
-                sliderIndicator.Size = UDim2.new(0, nCalculation, 0, 12)
-                slideText = compare and new .. compareSign .. tostring(values.max - 1) .. suffix or new .. suffix
-                sliderValue.Text = slideText
+                ValueNum = math.clamp(new, values.min, values.max)
+                render(ValueNum)
                 return SliderFunctions
             end
-            --
+
             function SliderFunctions:Max(new)
-                new = new or values.max
-                values.max = new + 2
-                slideText = compare and ValueNum .. compareSign .. tostring(values.max - 1) .. suffix or ValueNum .. suffix
+                values.max = new or values.max
+                render(ValueNum)
                 return SliderFunctions
             end
-            --
+
             function SliderFunctions:Min(new)
-                new = new or values.min
-                values.min = new
-                slideText = compare and new .. compareSign .. tostring(values.max - 1) .. suffix or ValueNum .. suffix
-                TweenService:Create(sliderIndicator, TweenTable["slider_drag"], {Size = UDim2.new(0, math.clamp(Mouse.X - sliderIndicator.AbsolutePosition.X, 0, sliderBackground.AbsoluteSize.X), 0, 12)}):Play()
+                values.min = new or values.min
+                render(ValueNum)
                 return SliderFunctions
             end
-            --
+
             function SliderFunctions:SetFunction(new)
-                new = new or callback
-                callback = new
+                callback = new or callback
                 return SliderFunctions
             end
-            --
+
             function SliderFunctions:Text(new)
-                new = new or sliderLabel.Text
-                sliderLabel.Text = new
+                sliderLabel.Text = new or sliderLabel.Text
                 return SliderFunctions
             end
-            --
+
             function SliderFunctions:Hide()
                 sliderFrame.Visible = false
                 return SliderFunctions
             end
-            --
+
             function SliderFunctions:Show()
                 sliderFrame.Visible = true
                 return SliderFunctions
             end
-            --
+
             function SliderFunctions:Remove()
                 sliderFrame:Destroy()
                 return SliderFunctions
             end
+
+            UpdatePageSize()
+
             return SliderFunctions
+        end
         end
         --
         function Components:NewSeperator()
