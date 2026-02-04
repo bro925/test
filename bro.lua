@@ -3325,7 +3325,7 @@ function library:Init(key)
             }
             callback = callback or function() end
 
-            values.max = values.max + 1
+            values.max = values.max
 
             local sliderFrame = Instance.new("Frame")
             local sliderFolder = Instance.new("Folder")
@@ -3548,7 +3548,7 @@ function library:Init(key)
             --
             function SliderFunctions:Max(new)
                 new = new or values.max
-                values.max = new + 1
+                values.max = new
                 slideText = compare and ValueNum .. compareSign .. tostring(values.max) .. suffix or ValueNum .. suffix
                 return SliderFunctions
             end
