@@ -3320,7 +3320,7 @@ function library:Init(key)
             compareSign = compareSign or "/"
             values = values or {
                 min = values.min or 0,
-                max = values.max or 100,
+                max = values.max or 200,
                 default = values.default or 0
             }
             callback = callback or function() end
