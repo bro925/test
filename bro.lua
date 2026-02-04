@@ -1915,7 +1915,7 @@ function library:Init(key)
                 local keybindLabelStraint = Instance.new("UISizeConstraint")
                 local keybindBackgroundStraint = Instance.new("UISizeConstraint")
                 local keybindStraint = Instance.new("UISizeConstraint")
-
+            
                 keybind.Name = "keybind"
                 keybind.Parent = Extras
                 keybind.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
@@ -1927,27 +1927,27 @@ function library:Init(key)
                 keybind.TextColor3 = Color3.fromRGB(0, 0, 0)
                 keybind.TextSize = 14.000
                 keybind.Active = false
-    
+            
                 keybindCorner.CornerRadius = UDim.new(0, 2)
                 keybindCorner.Name = "keybindCorner"
                 keybindCorner.Parent = keybind
-    
+            
                 keybindBackground.Name = "keybindBackground"
                 keybindBackground.Parent = keybind
                 keybindBackground.AnchorPoint = Vector2.new(0.5, 0.5)
                 keybindBackground.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 keybindBackground.Position = UDim2.new(0.5, 0, 0.5, 0)
                 keybindBackground.Size = UDim2.new(0, 85, 0, 20)
-    
+            
                 keybindGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(34, 34, 34)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(28, 28, 28))}
                 keybindGradient.Rotation = 90
                 keybindGradient.Name = "keybindGradient"
                 keybindGradient.Parent = keybindBackground
-    
+            
                 keybindBackCorner.CornerRadius = UDim.new(0, 2)
                 keybindBackCorner.Name = "keybindBackCorner"
                 keybindBackCorner.Parent = keybindBackground
-    
+            
                 keybindButtonLabel.Name = "keybindButtonLabel"
                 keybindButtonLabel.Parent = keybindBackground
                 keybindButtonLabel.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -1961,23 +1961,23 @@ function library:Init(key)
                 keybindButtonLabel.TextColor3 = Color3.fromRGB(190, 190, 190)
                 keybindButtonLabel.TextSize = 14.000
                 keybindButtonLabel.RichText = true
-    
+            
                 keybindLabelStraint.Name = "keybindLabelStraint"
                 keybindLabelStraint.Parent = keybindButtonLabel
                 keybindLabelStraint.MinSize = Vector2.new(28, 20)
-    
+            
                 keybindBackgroundStraint.Name = "keybindBackgroundStraint"
                 keybindBackgroundStraint.Parent = keybindBackground
                 keybindBackgroundStraint.MinSize = Vector2.new(28, 20)
-    
+            
                 keybindStraint.Name = "keybindStraint"
                 keybindStraint.Parent = keybind
                 keybindStraint.MinSize = Vector2.new(30, 22)
-    
+            
                 local Shortcuts = {
                     Return = "enter"
                 }
-    
+            
                 keybindButtonLabel.Text = Shortcuts[default_t.Name] or default_t.Name
                 CreateTween("keybind", 0.08)
                 
@@ -1995,9 +1995,9 @@ function library:Init(key)
                 keybindButtonLabel:GetPropertyChangedSignal("Text"):Connect(ResizeKeybind)
                 ResizeKeybind()
                 UpdatePageSize()
-    
+            
                 local ChosenKey = default_t.Name
-    
+            
                 keybind.MouseButton1Click:Connect(function()
                     keybindButtonLabel.Text = ". . ."
                     local InputWait = UserInputService.InputBegan:wait()
@@ -2007,24 +2007,54 @@ function library:Init(key)
                         ChosenKey = InputWait.KeyCode.Name
                     end
                 end)
-    
-                local ChatTextBox = Player.PlayerGui.Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
+            
+                -- Function to check if chat is focused
+                local function IsChatFocused()
+                    local playerGui = Player:WaitForChild("PlayerGui")
+                    
+                    -- Try different common chat GUI paths
+                    local chatPaths = {
+                        "Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar",
+                        "Chat.ChatFrame.ChatBar",
+                        "Chat.ChatBar",
+                        "Chat.Frame.ChatBar"
+                    }
+                    
+                    for _, path in pairs(chatPaths) do
+                        local success, chatBar = pcall(function()
+                            return playerGui:FindFirstChild(path, true)
+                        end)
+                        
+                        if success and chatBar then
+                            if chatBar:IsA("TextBox") then
+                                return chatBar:IsFocused()
+                            elseif chatBar:FindFirstChildWhichIsA("TextBox") then
+                                return chatBar:FindFirstChildWhichIsA("TextBox"):IsFocused()
+                            end
+                        end
+                    end
+                    
+                    return false
+                end
+            
                 if UserInputService.WindowFocused then
                     UserInputService.InputBegan:Connect(function(c, p)
                         if not p then
-                            if c.KeyCode.Name == ChosenKey and not ChatTextBox:IsFocused() then
-                                On = not On
-                                local SizeOn = On and UDim2.new(0, 12, 0, 12) or UDim2.new(0, 0, 0, 0)
-                                local Transparency = On and 0 or 1
-                                TweenService:Create(toggleDesign, TweenTable["toggle_form"], {Size = SizeOn}):Play()
-                                TweenService:Create(toggleDesign, TweenTable["toggle_form"], {BackgroundTransparency = Transparency}):Play()
-                                callback_t(On)
-                                return
+                            if c.KeyCode.Name == ChosenKey then
+                                if not IsChatFocused() then
+                                    On = not On
+                                    local SizeOn = On and UDim2.new(0, 12, 0, 12) or UDim2.new(0, 0, 0, 0)
+                                    local Transparency = On and 0 or 1
+                                    TweenService:Create(toggleDesign, TweenTable["toggle_form"], {Size = SizeOn}):Play()
+                                    TweenService:Create(toggleDesign, TweenTable["toggle_form"], {BackgroundTransparency = Transparency}):Play()
+                                    callback_t(On)
+                                    return
+                                end
                             end
                         end
                     end)
                 end
-    
+            
                 local ExtraKeybindFunctions = {}
                 function ExtraKeybindFunctions:SetKey(new)
                     new = new or ChosenKey.Name
@@ -2045,253 +2075,275 @@ function library:Init(key)
                 end
                 --
                 function ExtraKeybindFunctions:Hide()
-                    keybindFrame.Visible = false
+                    keybind.Visible = false
                     return ExtraKeybindFunctions
                 end
                 --
                 function ExtraKeybindFunctions:Show()
-                    keybindFrame.Visible = true
+                    keybind.Visible = true
                     return ExtraKeybindFunctions
                 end
                 return ExtraKeybindFunctions and ToggleFunctions
             end
-
-            if default then
-                toggleDesign.Size = UDim2.new(0, 12, 0, 12)
-                toggleDesign.BackgroundTransparency = 0
-                callback(true)
-            end
-            return ToggleFunctions
-        end
-
-        function Components:NewKeybind(text, default, callback)
-            text = text or "keybind"
-            default = default or Enum.KeyCode.P
-            callback = callback or function() end
-
-            local keybindFrame = Instance.new("Frame")
-            local keybindButton = Instance.new("TextButton")
-            local keybindLayout = Instance.new("UIListLayout")
-            local keybindLabel = Instance.new("TextLabel")
-            local keybindPadding = Instance.new("UIPadding")
-            local keybindFolder = Instance.new("Folder")
-            local keybindFolderLayout = Instance.new("UIListLayout")
-            local keybind = Instance.new("TextButton")
-            local keybindCorner = Instance.new("UICorner")
-            local keybindBackground = Instance.new("Frame")
-            local keybindGradient = Instance.new("UIGradient")
-            local keybindBackCorner = Instance.new("UICorner")
-            local keybindButtonLabel = Instance.new("TextLabel")
-            local keybindLabelStraint = Instance.new("UISizeConstraint")
-            local keybindBackgroundStraint = Instance.new("UISizeConstraint")
-            local keybindStraint = Instance.new("UISizeConstraint")
-
-            keybindFrame.Name = "keybindFrame"
-            keybindFrame.Parent = page
-            keybindFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-            keybindFrame.BackgroundTransparency = 1.000
-            keybindFrame.ClipsDescendants = true
-            keybindFrame.Size = UDim2.new(0, 396, 0, 24)
-
-            keybindButton.Name = "keybindButton"
-            keybindButton.Parent = keybindFrame
-            keybindButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-            keybindButton.BackgroundTransparency = 1.000
-            keybindButton.Size = UDim2.new(0, 396, 0, 24)
-            keybindButton.AutoButtonColor = false
-            keybindButton.Font = Enum.Font.SourceSans
-            keybindButton.Text = ""
-            keybindButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-            keybindButton.TextSize = 14.000
-
-            keybindLayout.Name = "keybindLayout"
-            keybindLayout.Parent = keybindButton
-            keybindLayout.FillDirection = Enum.FillDirection.Horizontal
-            keybindLayout.SortOrder = Enum.SortOrder.LayoutOrder
-            keybindLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-            keybindLayout.Padding = UDim.new(0, 4)
-
-            keybindLabel.Name = "keybindLabel"
-            keybindLabel.Parent = keybindButton
-            keybindLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-            keybindLabel.BackgroundTransparency = 1.000
-            keybindLabel.Size = UDim2.new(0, 396, 0, 24)
-            keybindLabel.Font = Enum.Font.Code
-            keybindLabel.Text = text
-            keybindLabel.TextColor3 = Color3.fromRGB(190, 190, 190)
-            keybindLabel.TextSize = 14.000
-            keybindLabel.TextWrapped = true
-            keybindLabel.TextXAlignment = Enum.TextXAlignment.Left
-            keybindLabel.RichText = true
-
-            keybindPadding.Name = "keybindPadding"
-            keybindPadding.Parent = keybindLabel
-            keybindPadding.PaddingBottom = UDim.new(0, 6)
-            keybindPadding.PaddingLeft = UDim.new(0, 2)
-            keybindPadding.PaddingRight = UDim.new(0, 6)
-            keybindPadding.PaddingTop = UDim.new(0, 6)
-
-            keybindFolder.Name = "keybindFolder"
-            keybindFolder.Parent = keybindFrame
-
-            keybindFolderLayout.Name = "keybindFolderLayout"
-            keybindFolderLayout.Parent = keybindFolder
-            keybindFolderLayout.FillDirection = Enum.FillDirection.Horizontal
-            keybindFolderLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
-            keybindFolderLayout.SortOrder = Enum.SortOrder.LayoutOrder
-            keybindFolderLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-            keybindFolderLayout.Padding = UDim.new(0, 4)
-
-            keybind.Name = "keybind"
-            keybind.Parent = keybindFolder
-            keybind.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-            keybind.Position = UDim2.new(0.780303001, 0, 0, 0)
-            keybind.Size = UDim2.new(0, 87, 0, 22)
-            keybind.AutoButtonColor = false
-            keybind.Font = Enum.Font.SourceSans
-            keybind.Text = ""
-            keybind.TextColor3 = Color3.fromRGB(0, 0, 0)
-            keybind.TextSize = 14.000
-            keybind.Active = false
-
-            keybindCorner.CornerRadius = UDim.new(0, 2)
-            keybindCorner.Name = "keybindCorner"
-            keybindCorner.Parent = keybind
-
-            keybindBackground.Name = "keybindBackground"
-            keybindBackground.Parent = keybind
-            keybindBackground.AnchorPoint = Vector2.new(0.5, 0.5)
-            keybindBackground.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-            keybindBackground.Position = UDim2.new(0.5, 0, 0.5, 0)
-            keybindBackground.Size = UDim2.new(0, 85, 0, 20)
-
-            keybindGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(34, 34, 34)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(28, 28, 28))}
-            keybindGradient.Rotation = 90
-            keybindGradient.Name = "keybindGradient"
-            keybindGradient.Parent = keybindBackground
-
-            keybindBackCorner.CornerRadius = UDim.new(0, 2)
-            keybindBackCorner.Name = "keybindBackCorner"
-            keybindBackCorner.Parent = keybindBackground
-
-            keybindButtonLabel.Name = "keybindButtonLabel"
-            keybindButtonLabel.Parent = keybindBackground
-            keybindButtonLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-            keybindButtonLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-            keybindButtonLabel.BackgroundTransparency = 1.000
-            keybindButtonLabel.ClipsDescendants = true
-            keybindButtonLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
-            keybindButtonLabel.Size = UDim2.new(0, 85, 0, 20)
-            keybindButtonLabel.Font = Enum.Font.Code
-            keybindButtonLabel.Text = ". . ."
-            keybindButtonLabel.TextColor3 = Color3.fromRGB(190, 190, 190)
-            keybindButtonLabel.TextSize = 14.000
-            keybindButtonLabel.RichText = true
-
-            keybindLabelStraint.Name = "keybindLabelStraint"
-            keybindLabelStraint.Parent = keybindButtonLabel
-            keybindLabelStraint.MinSize = Vector2.new(28, 20)
-
-            keybindBackgroundStraint.Name = "keybindBackgroundStraint"
-            keybindBackgroundStraint.Parent = keybindBackground
-            keybindBackgroundStraint.MinSize = Vector2.new(28, 20)
-
-            keybindStraint.Name = "keybindStraint"
-            keybindStraint.Parent = keybind
-            keybindStraint.MinSize = Vector2.new(30, 22)
-
-            local Shortcuts = {
-                Return = "enter"
-            }
-
-            keybindButtonLabel.Text = Shortcuts[default.Name] or default.Name
-            CreateTween("keybind", 0.08)
             
-            local NewKeybindSize = TextService:GetTextSize(keybindButtonLabel.Text, keybindButtonLabel.TextSize, keybindButtonLabel.Font, Vector2.new(math.huge,math.huge))
-            keybindButtonLabel.Size = UDim2.new(0, NewKeybindSize.X + 6, 0, 20)
-            keybindBackground.Size = UDim2.new(0, NewKeybindSize.X + 6, 0, 20)
-            keybind.Size = UDim2.new(0, NewKeybindSize.X + 8, 0, 22)
+            function Components:NewKeybind(text, default, callback)
+                text = text or "keybind"
+                default = default or Enum.KeyCode.P
+                callback = callback or function() end
             
-            function ResizeKeybind()
-                NewKeybindSize = TextService:GetTextSize(keybindButtonLabel.Text, keybindButtonLabel.TextSize, keybindButtonLabel.Font, Vector2.new(math.huge,math.huge))
-                TweenService:Create(keybindButtonLabel, TweenTable["keybind"], {Size = UDim2.new(0, NewKeybindSize.X + 6, 0, 20)}):Play()
-                TweenService:Create(keybindBackground, TweenTable["keybind"], {Size = UDim2.new(0, NewKeybindSize.X + 6, 0, 20)}):Play()
-                TweenService:Create(keybind, TweenTable["keybind"], {Size = UDim2.new(0, NewKeybindSize.X + 8, 0, 22)}):Play()
-            end
-            keybindButtonLabel:GetPropertyChangedSignal("Text"):Connect(ResizeKeybind)
-            ResizeKeybind()
-
-            local ChosenKey = default
-            keybindButton.MouseButton1Click:Connect(function()
-                keybindButtonLabel.Text = "..."
-                local InputWait = UserInputService.InputBegan:wait()
-                if UserInputService.WindowFocused and InputWait.KeyCode.Name ~= "Unknown" then
-                    local Result = Shortcuts[InputWait.KeyCode.Name] or InputWait.KeyCode.Name
-                    keybindButtonLabel.Text = Result
-                    ChosenKey = InputWait.KeyCode.Name
-                end
-            end)
-
-            keybind.MouseButton1Click:Connect(function()
+                local keybindFrame = Instance.new("Frame")
+                local keybindButton = Instance.new("TextButton")
+                local keybindLayout = Instance.new("UIListLayout")
+                local keybindLabel = Instance.new("TextLabel")
+                local keybindPadding = Instance.new("UIPadding")
+                local keybindFolder = Instance.new("Folder")
+                local keybindFolderLayout = Instance.new("UIListLayout")
+                local keybind = Instance.new("TextButton")
+                local keybindCorner = Instance.new("UICorner")
+                local keybindBackground = Instance.new("Frame")
+                local keybindGradient = Instance.new("UIGradient")
+                local keybindBackCorner = Instance.new("UICorner")
+                local keybindButtonLabel = Instance.new("TextLabel")
+                local keybindLabelStraint = Instance.new("UISizeConstraint")
+                local keybindBackgroundStraint = Instance.new("UISizeConstraint")
+                local keybindStraint = Instance.new("UISizeConstraint")
+            
+                keybindFrame.Name = "keybindFrame"
+                keybindFrame.Parent = page
+                keybindFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                keybindFrame.BackgroundTransparency = 1.000
+                keybindFrame.ClipsDescendants = true
+                keybindFrame.Size = UDim2.new(0, 396, 0, 24)
+            
+                keybindButton.Name = "keybindButton"
+                keybindButton.Parent = keybindFrame
+                keybindButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                keybindButton.BackgroundTransparency = 1.000
+                keybindButton.Size = UDim2.new(0, 396, 0, 24)
+                keybindButton.AutoButtonColor = false
+                keybindButton.Font = Enum.Font.SourceSans
+                keybindButton.Text = ""
+                keybindButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+                keybindButton.TextSize = 14.000
+            
+                keybindLayout.Name = "keybindLayout"
+                keybindLayout.Parent = keybindButton
+                keybindLayout.FillDirection = Enum.FillDirection.Horizontal
+                keybindLayout.SortOrder = Enum.SortOrder.LayoutOrder
+                keybindLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+                keybindLayout.Padding = UDim.new(0, 4)
+            
+                keybindLabel.Name = "keybindLabel"
+                keybindLabel.Parent = keybindButton
+                keybindLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                keybindLabel.BackgroundTransparency = 1.000
+                keybindLabel.Size = UDim2.new(0, 396, 0, 24)
+                keybindLabel.Font = Enum.Font.Code
+                keybindLabel.Text = text
+                keybindLabel.TextColor3 = Color3.fromRGB(190, 190, 190)
+                keybindLabel.TextSize = 14.000
+                keybindLabel.TextWrapped = true
+                keybindLabel.TextXAlignment = Enum.TextXAlignment.Left
+                keybindLabel.RichText = true
+            
+                keybindPadding.Name = "keybindPadding"
+                keybindPadding.Parent = keybindLabel
+                keybindPadding.PaddingBottom = UDim.new(0, 6)
+                keybindPadding.PaddingLeft = UDim.new(0, 2)
+                keybindPadding.PaddingRight = UDim.new(0, 6)
+                keybindPadding.PaddingTop = UDim.new(0, 6)
+            
+                keybindFolder.Name = "keybindFolder"
+                keybindFolder.Parent = keybindFrame
+            
+                keybindFolderLayout.Name = "keybindFolderLayout"
+                keybindFolderLayout.Parent = keybindFolder
+                keybindFolderLayout.FillDirection = Enum.FillDirection.Horizontal
+                keybindFolderLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+                keybindFolderLayout.SortOrder = Enum.SortOrder.LayoutOrder
+                keybindFolderLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+                keybindFolderLayout.Padding = UDim.new(0, 4)
+            
+                keybind.Name = "keybind"
+                keybind.Parent = keybindFolder
+                keybind.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                keybind.Position = UDim2.new(0.780303001, 0, 0, 0)
+                keybind.Size = UDim2.new(0, 87, 0, 22)
+                keybind.AutoButtonColor = false
+                keybind.Font = Enum.Font.SourceSans
+                keybind.Text = ""
+                keybind.TextColor3 = Color3.fromRGB(0, 0, 0)
+                keybind.TextSize = 14.000
+                keybind.Active = false
+            
+                keybindCorner.CornerRadius = UDim.new(0, 2)
+                keybindCorner.Name = "keybindCorner"
+                keybindCorner.Parent = keybind
+            
+                keybindBackground.Name = "keybindBackground"
+                keybindBackground.Parent = keybind
+                keybindBackground.AnchorPoint = Vector2.new(0.5, 0.5)
+                keybindBackground.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                keybindBackground.Position = UDim2.new(0.5, 0, 0.5, 0)
+                keybindBackground.Size = UDim2.new(0, 85, 0, 20)
+            
+                keybindGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(34, 34, 34)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(28, 28, 28))}
+                keybindGradient.Rotation = 90
+                keybindGradient.Name = "keybindGradient"
+                keybindGradient.Parent = keybindBackground
+            
+                keybindBackCorner.CornerRadius = UDim.new(0, 2)
+                keybindBackCorner.Name = "keybindBackCorner"
+                keybindBackCorner.Parent = keybindBackground
+            
+                keybindButtonLabel.Name = "keybindButtonLabel"
+                keybindButtonLabel.Parent = keybindBackground
+                keybindButtonLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+                keybindButtonLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                keybindButtonLabel.BackgroundTransparency = 1.000
+                keybindButtonLabel.ClipsDescendants = true
+                keybindButtonLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+                keybindButtonLabel.Size = UDim2.new(0, 85, 0, 20)
+                keybindButtonLabel.Font = Enum.Font.Code
                 keybindButtonLabel.Text = ". . ."
-                local InputWait = UserInputService.InputBegan:wait()
-                if UserInputService.WindowFocused and InputWait.KeyCode.Name ~= "Unknown" then
-                    local Result = Shortcuts[InputWait.KeyCode.Name] or InputWait.KeyCode.Name
-                    keybindButtonLabel.Text = Result
-                    ChosenKey = InputWait.KeyCode.Name
+                keybindButtonLabel.TextColor3 = Color3.fromRGB(190, 190, 190)
+                keybindButtonLabel.TextSize = 14.000
+                keybindButtonLabel.RichText = true
+            
+                keybindLabelStraint.Name = "keybindLabelStraint"
+                keybindLabelStraint.Parent = keybindButtonLabel
+                keybindLabelStraint.MinSize = Vector2.new(28, 20)
+            
+                keybindBackgroundStraint.Name = "keybindBackgroundStraint"
+                keybindBackgroundStraint.Parent = keybindBackground
+                keybindBackgroundStraint.MinSize = Vector2.new(28, 20)
+            
+                keybindStraint.Name = "keybindStraint"
+                keybindStraint.Parent = keybind
+                keybindStraint.MinSize = Vector2.new(30, 22)
+            
+                local Shortcuts = {
+                    Return = "enter"
+                }
+            
+                keybindButtonLabel.Text = Shortcuts[default.Name] or default.Name
+                CreateTween("keybind", 0.08)
+                
+                local NewKeybindSize = TextService:GetTextSize(keybindButtonLabel.Text, keybindButtonLabel.TextSize, keybindButtonLabel.Font, Vector2.new(math.huge,math.huge))
+                keybindButtonLabel.Size = UDim2.new(0, NewKeybindSize.X + 6, 0, 20)
+                keybindBackground.Size = UDim2.new(0, NewKeybindSize.X + 6, 0, 20)
+                keybind.Size = UDim2.new(0, NewKeybindSize.X + 8, 0, 22)
+                
+                function ResizeKeybind()
+                    NewKeybindSize = TextService:GetTextSize(keybindButtonLabel.Text, keybindButtonLabel.TextSize, keybindButtonLabel.Font, Vector2.new(math.huge,math.huge))
+                    TweenService:Create(keybindButtonLabel, TweenTable["keybind"], {Size = UDim2.new(0, NewKeybindSize.X + 6, 0, 20)}):Play()
+                    TweenService:Create(keybindBackground, TweenTable["keybind"], {Size = UDim2.new(0, NewKeybindSize.X + 6, 0, 20)}):Play()
+                    TweenService:Create(keybind, TweenTable["keybind"], {Size = UDim2.new(0, NewKeybindSize.X + 8, 0, 22)}):Play()
                 end
-            end)
-
-            local ChatTextBox = Player.PlayerGui.Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
-            if UserInputService.WindowFocused then
-                UserInputService.InputBegan:Connect(function(c, p)
-                    if not p then
-                        if c.KeyCode.Name == ChosenKey and not ChatTextBox:IsFocused() then
-                            callback(ChosenKey)
-                            return
-                        end
+                keybindButtonLabel:GetPropertyChangedSignal("Text"):Connect(ResizeKeybind)
+                ResizeKeybind()
+            
+                local ChosenKey = default.Name
+                keybindButton.MouseButton1Click:Connect(function()
+                    keybindButtonLabel.Text = "..."
+                    local InputWait = UserInputService.InputBegan:wait()
+                    if UserInputService.WindowFocused and InputWait.KeyCode.Name ~= "Unknown" then
+                        local Result = Shortcuts[InputWait.KeyCode.Name] or InputWait.KeyCode.Name
+                        keybindButtonLabel.Text = Result
+                        ChosenKey = InputWait.KeyCode.Name
                     end
                 end)
-            end
-
-            UpdatePageSize()
-
-            local KeybindFunctions = {}
-            function KeybindFunctions:Fire()
-                callback(ChosenKey)
+            
+                keybind.MouseButton1Click:Connect(function()
+                    keybindButtonLabel.Text = ". . ."
+                    local InputWait = UserInputService.InputBegan:wait()
+                    if UserInputService.WindowFocused and InputWait.KeyCode.Name ~= "Unknown" then
+                        local Result = Shortcuts[InputWait.KeyCode.Name] or InputWait.KeyCode.Name
+                        keybindButtonLabel.Text = Result
+                        ChosenKey = InputWait.KeyCode.Name
+                    end
+                end)
+            
+                -- Function to check if chat is focused
+                local function IsChatFocused()
+                    local playerGui = Player:WaitForChild("PlayerGui")
+                    
+                    -- Try different common chat GUI paths
+                    local chatPaths = {
+                        "Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar",
+                        "Chat.ChatFrame.ChatBar",
+                        "Chat.ChatBar",
+                        "Chat.Frame.ChatBar"
+                    }
+                    
+                    for _, path in pairs(chatPaths) do
+                        local success, chatBar = pcall(function()
+                            return playerGui:FindFirstChild(path, true)
+                        end)
+                        
+                        if success and chatBar then
+                            if chatBar:IsA("TextBox") then
+                                return chatBar:IsFocused()
+                            elseif chatBar:FindFirstChildWhichIsA("TextBox") then
+                                return chatBar:FindFirstChildWhichIsA("TextBox"):IsFocused()
+                            end
+                        end
+                    end
+                    
+                    return false
+                end
+            
+                if UserInputService.WindowFocused then
+                    UserInputService.InputBegan:Connect(function(c, p)
+                        if not p then
+                            if c.KeyCode.Name == ChosenKey then
+                                if not IsChatFocused() then
+                                    callback(ChosenKey)
+                                    return
+                                end
+                            end
+                        end
+                    end)
+                end
+            
+                UpdatePageSize()
+            
+                local KeybindFunctions = {}
+                function KeybindFunctions:Fire()
+                    callback(ChosenKey)
+                    return KeybindFunctions
+                end
+                --
+                function KeybindFunctions:SetFunction(new)
+                    new = new or function() end
+                    callback = new
+                    return KeybindFunctions 
+                end
+                --
+                function KeybindFunctions:SetKey(new)
+                    new = new or ChosenKey.Name
+                    ChosenKey = new.Name
+                    keybindButtonLabel.Text = new.Name
+                    return KeybindFunctions
+                end
+                --
+                function KeybindFunctions:Text(new)
+                    new = new or keybindLabel.Text
+                    keybindLabel.Text = new
+                    return KeybindFunctions
+                end
+                --
+                function KeybindFunctions:Hide()
+                    keybindFrame.Visible = false
+                    return KeybindFunctions
+                end
+                --
+                function KeybindFunctions:Show()
+                    keybindFrame.Visible = true
+                    return KeybindFunctions
+                end
                 return KeybindFunctions
             end
-            --
-            function KeybindFunctions:SetFunction(new)
-                new = new or function() end
-                callback = new
-                return KeybindFunctions 
-            end
-            --
-            function KeybindFunctions:SetKey(new)
-                new = new or ChosenKey.Name
-                ChosenKey = new.Name
-                keybindButtonLabel.Text = new.Name
-                return KeybindFunctions
-            end
-            --
-            function KeybindFunctions:Text(new)
-                new = new or keybindLabel.Text
-                keybindLabel.Text = new
-                return KeybindFunctions
-            end
-            --
-            function KeybindFunctions:Hide()
-                keybindFrame.Visible = false
-                return KeybindFunctions
-            end
-            --
-            function KeybindFunctions:Show()
-                keybindFrame.Visible = true
-                return KeybindFunctions
-            end
-            return KeybindFunctions
-        end
         --
         function Components:NewTextbox(text, default, place, format, type, autoexec, autoclear, callback)
             text = text or "text box"
