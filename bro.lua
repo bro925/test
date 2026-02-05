@@ -1992,14 +1992,25 @@ function library:Init(key)
     
                 local ChosenKey = default_t.Name
     
+                local inputConnection
+                inputConnection = UserInputService.InputBegan:Connect(function(input, processed)
+                    if not processed and input.KeyCode == ChosenKey then
+                        ToggleFunctions:Change()
+                    end
+                end)
+
                 keybind.MouseButton1Click:Connect(function()
                     keybindButtonLabel.Text = ". . ."
                     local InputWait = UserInputService.InputBegan:wait()
                     if UserInputService.WindowFocused and InputWait.KeyCode.Name ~= "Unknown" then
                         local Result = Shortcuts[InputWait.KeyCode.Name] or InputWait.KeyCode.Name
                         keybindButtonLabel.Text = Result
-                        ChosenKey = InputWait.KeyCode.Name
+                        ChosenKey = InputWait.KeyCode
                     end
+                end)
+
+                toggleButton.Destroying:Connect(function()
+                    if inputConnection then inputConnection:Disconnect() end
                 end)
     
                 local ExtraKeybindFunctions = {}
