@@ -3173,14 +3173,18 @@ function library:Init(key)
             local function updateContainerSize()
                 if isExpanded and optionCount > 0 then
                     local displayHeight = math.min(optionCount, maxVisibleOptions) * 20
+                    local totalFrameHeight = 48 + displayHeight
+                    TweenService:Create(selectorFrame, TweenTable["selector"], {Size = UDim2.new(0, 396, 0, totalFrameHeight)}):Play()
                     TweenService:Create(selectorContainer, TweenTable["selector"], {Size = UDim2.new(0, 396, 0, displayHeight)}):Play()
                     TweenService:Create(dropdownArrow, TweenTable["selector"], {Rotation = 180}):Play()
                     task.wait(0.15)
                     selectorContainer.CanvasSize = UDim2.new(0, 390, 0, optionCount * 20)
                     UpdatePageSize()
                 else
+                    TweenService:Create(selectorFrame, TweenTable["selector"], {Size = UDim2.new(0, 396, 0, 48)}):Play()
                     TweenService:Create(selectorContainer, TweenTable["selector"], {Size = UDim2.new(0, 396, 0, 0)}):Play()
                     TweenService:Create(dropdownArrow, TweenTable["selector"], {Rotation = 0}):Play()
+                    task.wait(0.15)
                     UpdatePageSize()
                 end
             end
