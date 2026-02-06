@@ -3046,14 +3046,15 @@ function library:Init(key)
             local selectorButtonLayout = Instance.new("UIListLayout")
             local selectorText = Instance.new("TextLabel")
             local dropdownArrow = Instance.new("TextLabel")
-            local selectorContainer = Instance.new("Frame")
+            local selectorContainer = Instance.new("ScrollingFrame")
             local selectorContainerLayout = Instance.new("UIListLayout")
+            local selectorContainerCorner = Instance.new("UICorner")
             
             selectorFrame.Name = "selectorFrame"
             selectorFrame.Parent = page
             selectorFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             selectorFrame.BackgroundTransparency = 1.000
-            selectorFrame.ClipsDescendants = true
+            selectorFrame.ClipsDescendants = false
             selectorFrame.Size = UDim2.new(0, 396, 0, 48)
 
             selectorLabel.Name = "selectorLabel"
@@ -3148,21 +3149,34 @@ function library:Init(key)
             selectorContainer.Size = UDim2.new(0, 396, 0, 0)
             selectorContainer.Visible = false
             selectorContainer.ClipsDescendants = true
+            selectorContainer.ScrollBarThickness = 6
+            selectorContainer.ScrollBarImageColor3 = Color3.fromRGB(159, 115, 255)
+            selectorContainer.TopImage = "http://www.roblox.com/asset/?id=3062506202"
+            selectorContainer.MidImage = "http://www.roblox.com/asset/?id=3062506202"
+            selectorContainer.BottomImage = "http://www.roblox.com/asset/?id=3062506202"
+            selectorContainer.BorderSizePixel = 0
+            
+            selectorContainerCorner.CornerRadius = UDim.new(0, 2)
+            selectorContainerCorner.Name = "selectorContainerCorner"
+            selectorContainerCorner.Parent = selectorContainer
             
             selectorContainerLayout.Name = "selectorContainerLayout"
             selectorContainerLayout.Parent = selectorContainer
             selectorContainerLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-            CreateTween("selector", 0.12)
+            CreateTween("selector", 0.15)
             
             local isExpanded = false
             local optionCount = #list
+            local maxVisibleOptions = 5
             
             local function updateContainerSize()
-                if isExpanded then
-                    local newHeight = optionCount * 20
-                    TweenService:Create(selectorContainer, TweenTable["selector"], {Size = UDim2.new(0, 396, 0, newHeight)}):Play()
+                if isExpanded and optionCount > 0 then
+                    local displayHeight = math.min(optionCount, maxVisibleOptions) * 20
+                    TweenService:Create(selectorContainer, TweenTable["selector"], {Size = UDim2.new(0, 396, 0, displayHeight)}):Play()
                     TweenService:Create(dropdownArrow, TweenTable["selector"], {Rotation = 180}):Play()
+                    task.wait(0.15)
+                    selectorContainer.CanvasSize = UDim2.new(0, 390, 0, optionCount * 20)
                     UpdatePageSize()
                 else
                     TweenService:Create(selectorContainer, TweenTable["selector"], {Size = UDim2.new(0, 396, 0, 0)}):Play()
@@ -3177,12 +3191,13 @@ function library:Init(key)
                 optionButton.Name = "optionButton"
                 optionButton.Parent = selectorContainer
                 optionButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-                optionButton.Size = UDim2.new(0, 396, 0, 20)
+                optionButton.Size = UDim2.new(0, 390, 0, 20)
                 optionButton.AutoButtonColor = false
                 optionButton.Font = Enum.Font.Code
                 optionButton.TextColor3 = Color3.fromRGB(160, 160, 160)
                 optionButton.TextSize = 14.000
-                optionButton.Text = v
+                optionButton.Text = ""
+                optionButton.BorderSizePixel = 0
                 
                 local optionLabel = Instance.new("TextLabel")
                 optionLabel.Parent = optionButton
@@ -3250,12 +3265,13 @@ function library:Init(key)
                 optionButton.Name = "optionButton"
                 optionButton.Parent = selectorContainer
                 optionButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-                optionButton.Size = UDim2.new(0, 396, 0, 20)
+                optionButton.Size = UDim2.new(0, 390, 0, 20)
                 optionButton.AutoButtonColor = false
                 optionButton.Font = Enum.Font.Code
                 optionButton.TextColor3 = Color3.fromRGB(160, 160, 160)
                 optionButton.TextSize = 14.000
-                optionButton.Text = new
+                optionButton.Text = ""
+                optionButton.BorderSizePixel = 0
                 
                 local optionLabel = Instance.new("TextLabel")
                 optionLabel.Parent = optionButton
@@ -3351,6 +3367,7 @@ function library:Init(key)
             
             function SelectorFunctions:Remove()
                 selectorFrame:Destroy()
+                UpdatePageSize()
                 return SelectorFunctions
             end
             
