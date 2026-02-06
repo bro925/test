@@ -1258,12 +1258,17 @@ function library:Init(key)
         end)
 
         local function UpdatePageSize()
-            local correction = pageLayout.AbsoluteContentSize
-            page.CanvasSize = UDim2.new(0, correction.X+13, 0, correction.Y+13)
+            task.defer(function()
+                local correction = pageLayout.AbsoluteContentSize
+                if correction.Y > 0 then
+                    page.CanvasSize = UDim2.new(0, 412, 0, correction.Y + 12)
+                end
+            end)
         end
 
         page.ChildAdded:Connect(UpdatePageSize)
         page.ChildRemoved:Connect(UpdatePageSize)
+        pageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(UpdatePageSize)
 
         TabLibrary.IsFirst = false
 
@@ -3032,31 +3037,25 @@ function library:Init(key)
             local selectorFrame = Instance.new("Frame")
             local selectorLabel = Instance.new("TextLabel")
             local selectorLabelPadding = Instance.new("UIPadding")
-            local selectorFrameLayout = Instance.new("UIListLayout")
-            local selector = Instance.new("TextButton")
-            local selectorCorner = Instance.new("UICorner")
-            local selectorLayout = Instance.new("UIListLayout")
-            local selectorPadding = Instance.new("UIPadding")
-            local selectorTwo = Instance.new("Frame")
+            local selectorButton = Instance.new("TextButton")
+            local selectorButtonCorner = Instance.new("UICorner")
+            local selectorButtonBackground = Instance.new("Frame")
+            local selectorButtonGradient = Instance.new("UIGradient")
+            local selectorButtonBackCorner = Instance.new("UICorner")
+            local selectorButtonContent = Instance.new("Frame")
+            local selectorButtonLayout = Instance.new("UIListLayout")
             local selectorText = Instance.new("TextLabel")
-            local textBoxValuesPadding = Instance.new("UIPadding")
-            local Frame = Instance.new("Frame")
-            local selectorTwoLayout = Instance.new("UIListLayout")
-            local selectorTwoGradient = Instance.new("UIGradient")
-            local selectorTwoCorner = Instance.new("UICorner")
-            local selectorPadding_2 = Instance.new("UIPadding")
+            local dropdownArrow = Instance.new("TextLabel")
             local selectorContainer = Instance.new("Frame")
-            local selectorTwoLayout_2 = Instance.new("UIListLayout")
+            local selectorContainerLayout = Instance.new("UIListLayout")
             
             selectorFrame.Name = "selectorFrame"
             selectorFrame.Parent = page
             selectorFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             selectorFrame.BackgroundTransparency = 1.000
             selectorFrame.ClipsDescendants = true
-            selectorFrame.Position = UDim2.new(0.00499999989, 0, 0.0895953774, 0)
-            selectorFrame.Size = UDim2.new(0, 396, 0, 46)
+            selectorFrame.Size = UDim2.new(0, 396, 0, 48)
 
-            
             selectorLabel.Name = "selectorLabel"
             selectorLabel.Parent = selectorFrame
             selectorLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -3077,250 +3076,284 @@ function library:Init(key)
             selectorLabelPadding.PaddingRight = UDim.new(0, 6)
             selectorLabelPadding.PaddingTop = UDim.new(0, 6)
             
-            selectorFrameLayout.Name = "selectorFrameLayout"
-            selectorFrameLayout.Parent = selectorFrame
-            selectorFrameLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-            selectorFrameLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            selectorButton.Name = "selectorButton"
+            selectorButton.Parent = selectorFrame
+            selectorButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            selectorButton.Size = UDim2.new(0, 396, 0, 24)
+            selectorButton.AutoButtonColor = false
+            selectorButton.Font = Enum.Font.SourceSans
+            selectorButton.Text = ""
+            selectorButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+            selectorButton.TextSize = 14.000
             
-            selector.Name = "selector"
-            selector.Parent = selectorFrame
-            selector.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-            selector.ClipsDescendants = true
-            selector.Position = UDim2.new(0, 0, 0.0926640928, 0)
-            selector.Size = UDim2.new(0, 396, 0, 21)
-            selector.AutoButtonColor = false
-            selector.Font = Enum.Font.SourceSans
-            selector.Text = ""
-            selector.TextColor3 = Color3.fromRGB(0, 0, 0)
-            selector.TextSize = 14.000
+            selectorButtonCorner.CornerRadius = UDim.new(0, 2)
+            selectorButtonCorner.Name = "selectorButtonCorner"
+            selectorButtonCorner.Parent = selectorButton
             
-            selectorCorner.CornerRadius = UDim.new(0, 2)
-            selectorCorner.Name = "selectorCorner"
-            selectorCorner.Parent = selector
+            selectorButtonBackground.Name = "selectorButtonBackground"
+            selectorButtonBackground.Parent = selectorButton
+            selectorButtonBackground.AnchorPoint = Vector2.new(0.5, 0.5)
+            selectorButtonBackground.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            selectorButtonBackground.Position = UDim2.new(0.5, 0, 0.5, 0)
+            selectorButtonBackground.Size = UDim2.new(0, 394, 0, 22)
             
-            selectorLayout.Name = "selectorLayout"
-            selectorLayout.Parent = selector
-            selectorLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-            selectorLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            selectorButtonGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(34, 34, 34)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(28, 28, 28))}
+            selectorButtonGradient.Rotation = 90
+            selectorButtonGradient.Name = "selectorButtonGradient"
+            selectorButtonGradient.Parent = selectorButtonBackground
             
-            selectorPadding.Name = "selectorPadding"
-            selectorPadding.Parent = selector
-            selectorPadding.PaddingTop = UDim.new(0, 1)
+            selectorButtonBackCorner.CornerRadius = UDim.new(0, 2)
+            selectorButtonBackCorner.Name = "selectorButtonBackCorner"
+            selectorButtonBackCorner.Parent = selectorButtonBackground
             
-            selectorTwo.Name = "selectorTwo"
-            selectorTwo.Parent = selector
-            selectorTwo.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-            selectorTwo.ClipsDescendants = true
-            selectorTwo.Position = UDim2.new(0.00252525252, 0, 0, 0)
-            selectorTwo.Size = UDim2.new(0, 394, 0, 20)
+            selectorButtonContent.Name = "selectorButtonContent"
+            selectorButtonContent.Parent = selectorButtonBackground
+            selectorButtonContent.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            selectorButtonContent.BackgroundTransparency = 1.000
+            selectorButtonContent.Size = UDim2.new(0, 394, 0, 22)
+            
+            selectorButtonLayout.Name = "selectorButtonLayout"
+            selectorButtonLayout.Parent = selectorButtonContent
+            selectorButtonLayout.FillDirection = Enum.FillDirection.Horizontal
+            selectorButtonLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+            selectorButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            selectorButtonLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+            selectorButtonLayout.Padding = UDim.new(0, 4)
             
             selectorText.Name = "selectorText"
-            selectorText.Parent = selectorTwo
+            selectorText.Parent = selectorButtonContent
             selectorText.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             selectorText.BackgroundTransparency = 1.000
-            selectorText.Size = UDim2.new(0, 394, 0, 20)
+            selectorText.Size = UDim2.new(1, -20, 1, 0)
             selectorText.Font = Enum.Font.Code
-            selectorText.LineHeight = 1.150
             selectorText.TextColor3 = Color3.fromRGB(160, 160, 160)
             selectorText.TextSize = 14.000
             selectorText.TextXAlignment = Enum.TextXAlignment.Left
             selectorText.Text = default
             
-            textBoxValuesPadding.Name = "textBoxValuesPadding"
-            textBoxValuesPadding.Parent = selectorText
-            textBoxValuesPadding.PaddingBottom = UDim.new(0, 6)
-            textBoxValuesPadding.PaddingLeft = UDim.new(0, 6)
-            textBoxValuesPadding.PaddingRight = UDim.new(0, 6)
-            textBoxValuesPadding.PaddingTop = UDim.new(0, 6)
-            
-            Frame.Parent = selectorText
-            Frame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-            Frame.BorderSizePixel = 0
-            Frame.Position = UDim2.new(-0.008, 0, 1.78, 0)
-            Frame.Size = UDim2.new(0, 388, 0, 1)
-            
-            selectorTwoLayout.Name = "selectorTwoLayout"
-            selectorTwoLayout.Parent = selectorTwo
-            selectorTwoLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-            selectorTwoLayout.SortOrder = Enum.SortOrder.LayoutOrder
-            
-            selectorTwoGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(34, 34, 34)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(28, 28, 28))}
-            selectorTwoGradient.Rotation = 90
-            selectorTwoGradient.Name = "selectorTwoGradient"
-            selectorTwoGradient.Parent = selectorTwo
-            
-            selectorTwoCorner.CornerRadius = UDim.new(0, 2)
-            selectorTwoCorner.Name = "selectorTwoCorner"
-            selectorTwoCorner.Parent = selectorTwo
-            
-            selectorPadding_2.Name = "selectorPadding"
-            selectorPadding_2.Parent = selectorTwo
-            selectorPadding_2.PaddingTop = UDim.new(0, 1)
+            dropdownArrow.Name = "dropdownArrow"
+            dropdownArrow.Parent = selectorButtonContent
+            dropdownArrow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            dropdownArrow.BackgroundTransparency = 1.000
+            dropdownArrow.Size = UDim2.new(0, 16, 1, 0)
+            dropdownArrow.Font = Enum.Font.Code
+            dropdownArrow.TextColor3 = Color3.fromRGB(160, 160, 160)
+            dropdownArrow.TextSize = 14.000
+            dropdownArrow.Text = "▼"
             
             selectorContainer.Name = "selectorContainer"
-            selectorContainer.Parent = selectorTwo
-            selectorContainer.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-            selectorContainer.BackgroundTransparency = 1.000
-            selectorContainer.Size = UDim2.new(0, 394, 0, 20)
-        
-            selectorTwoLayout_2.Name = "selectorTwoLayout"
-            selectorTwoLayout_2.Parent = selectorContainer
-            selectorTwoLayout_2.HorizontalAlignment = Enum.HorizontalAlignment.Center
-            selectorTwoLayout_2.SortOrder = Enum.SortOrder.LayoutOrder
+            selectorContainer.Parent = selectorFrame
+            selectorContainer.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            selectorContainer.Position = UDim2.new(0, 0, 0, 26)
+            selectorContainer.Size = UDim2.new(0, 396, 0, 0)
+            selectorContainer.Visible = false
+            selectorContainer.ClipsDescendants = true
+            
+            selectorContainerLayout.Name = "selectorContainerLayout"
+            selectorContainerLayout.Parent = selectorContainer
+            selectorContainerLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-            CreateTween("selector", 0.08)
-
-            selectorContainer.ChildAdded:Connect(UpdatePageSize)
-            selectorContainer.ChildAdded:Connect(UpdatePageSize)
-
-            UpdatePageSize()
-
-            local Amount = #list
-            local Val = (Amount * 20)
-            function checkSizes()
-                Amount = #list
-                Val = (Amount * 20) + 20
+            CreateTween("selector", 0.12)
+            
+            local isExpanded = false
+            local optionCount = #list
+            
+            local function updateContainerSize()
+                if isExpanded then
+                    local newHeight = optionCount * 20
+                    TweenService:Create(selectorContainer, TweenTable["selector"], {Size = UDim2.new(0, 396, 0, newHeight)}):Play()
+                    TweenService:Create(dropdownArrow, TweenTable["selector"], {Rotation = 180}):Play()
+                    UpdatePageSize()
+                else
+                    TweenService:Create(selectorContainer, TweenTable["selector"], {Size = UDim2.new(0, 396, 0, 0)}):Play()
+                    TweenService:Create(dropdownArrow, TweenTable["selector"], {Rotation = 0}):Play()
+                    UpdatePageSize()
+                end
             end
-            for i,v in next, list do
-                local optionButton = Instance.new("TextButton")
 
+            for i, v in next, list do
+                local optionButton = Instance.new("TextButton")
+                
                 optionButton.Name = "optionButton"
                 optionButton.Parent = selectorContainer
-                optionButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                optionButton.BackgroundTransparency = 1.000
-                optionButton.Size = UDim2.new(0, 394, 0, 20)
+                optionButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                optionButton.Size = UDim2.new(0, 396, 0, 20)
                 optionButton.AutoButtonColor = false
                 optionButton.Font = Enum.Font.Code
-                optionButton.Text = v
                 optionButton.TextColor3 = Color3.fromRGB(160, 160, 160)
                 optionButton.TextSize = 14.000
-                if optionButton.Text == default then
-                    optionButton.TextColor3 = Color3.fromRGB(159, 115, 255)
-                    callback(selectorText.Text)
+                optionButton.Text = v
+                
+                local optionLabel = Instance.new("TextLabel")
+                optionLabel.Parent = optionButton
+                optionLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                optionLabel.BackgroundTransparency = 1.000
+                optionLabel.Size = UDim2.new(1, 0, 1, 0)
+                optionLabel.Font = Enum.Font.Code
+                optionLabel.TextColor3 = Color3.fromRGB(160, 160, 160)
+                optionLabel.TextSize = 14.000
+                optionLabel.TextXAlignment = Enum.TextXAlignment.Left
+                optionLabel.Text = v
+                
+                local optionPadding = Instance.new("UIPadding")
+                optionPadding.Parent = optionLabel
+                optionPadding.PaddingLeft = UDim.new(0, 8)
+                
+                if v == default then
+                    selectorText.Text = v
+                    optionLabel.TextColor3 = Color3.fromRGB(159, 115, 255)
+                    callback(v)
                 end
-
+                
+                optionButton.MouseEnter:Connect(function()
+                    TweenService:Create(optionButton, TweenTable["selector"], {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}):Play()
+                end)
+                
+                optionButton.MouseLeave:Connect(function()
+                    TweenService:Create(optionButton, TweenTable["selector"], {BackgroundColor3 = Color3.fromRGB(50, 50, 50)}):Play()
+                end)
+                
                 optionButton.MouseButton1Click:Connect(function()
-                    for z,x in next, selectorContainer:GetChildren() do
-                        if x:IsA("TextButton") then
-                            TweenService:Create(x, TweenTable["selector"], {TextColor3 = Color3.fromRGB(160, 160, 160)}):Play()
+                    for _, child in pairs(selectorContainer:GetChildren()) do
+                        if child:IsA("TextButton") then
+                            local label = child:FindFirstChildOfClass("TextLabel")
+                            if label then
+                                TweenService:Create(label, TweenTable["selector"], {TextColor3 = Color3.fromRGB(160, 160, 160)}):Play()
+                            end
                         end
                     end
-                    TweenService:Create(optionButton, TweenTable["selector"], {TextColor3 = Color3.fromRGB(159, 115, 255)}):Play()
-                    selectorText.Text = optionButton.Text
-                    callback(optionButton.Text)
+                    
+                    TweenService:Create(optionLabel, TweenTable["selector"], {TextColor3 = Color3.fromRGB(159, 115, 255)}):Play()
+                    selectorText.Text = v
+                    callback(v)
+                    
+                    isExpanded = false
+                    selectorContainer.Visible = false
+                    updateContainerSize()
                 end)
-
-                selectorContainer.Size = UDim2.new(0, 394, 0, Val)
-                selectorTwo.Size = UDim2.new(0, 394, 0, Val)
-                selector.Size = UDim2.new(0, 396, 0, Val + 2)
-                selectorFrame.Size = UDim2.new(0, 396, 0, Val + 26)
-
-                UpdatePageSize()
-                checkSizes()
             end
-
+            
+            selectorButton.MouseButton1Click:Connect(function()
+                isExpanded = not isExpanded
+                selectorContainer.Visible = isExpanded
+                updateContainerSize()
+            end)
+            
             UpdatePageSize()
+            
             local SelectorFunctions = {}
-            local AddAmount = 0
+            
             function SelectorFunctions:AddOption(new, callback_f)
                 new = new or "option"
-                list[new] = new
-
+                
                 local optionButton = Instance.new("TextButton")
-
-                AddAmount = AddAmount + 20
-
                 optionButton.Name = "optionButton"
                 optionButton.Parent = selectorContainer
-                optionButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                optionButton.BackgroundTransparency = 1.000
-                optionButton.Size = UDim2.new(0, 394, 0, 20)
+                optionButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+                optionButton.Size = UDim2.new(0, 396, 0, 20)
                 optionButton.AutoButtonColor = false
                 optionButton.Font = Enum.Font.Code
-                optionButton.Text = new
-                optionButton.TextColor3 = Color3.fromRGB(140, 140, 140)
+                optionButton.TextColor3 = Color3.fromRGB(160, 160, 160)
                 optionButton.TextSize = 14.000
-                if optionButton.Text == default then
-                    optionButton.TextColor3 = Color3.fromRGB(159, 115, 255)
-                    callback(selectorText.Text)
-                end
-
-                optionButton.MouseButton1Click:Connect(function()
-                    for z,x in next, selectorContainer:GetChildren() do
-                        if x:IsA("TextButton") then
-                            TweenService:Create(x, TweenTable["selector"], {TextColor3 = Color3.fromRGB(140, 140, 140)}):Play()
-                        end
-                    end
-                    TweenService:Create(optionButton, TweenTable["selector"], {TextColor3 = Color3.fromRGB(159, 115, 255)}):Play()
-                    selectorText.Text = optionButton.Text
-                    callback(optionButton.Text)
+                optionButton.Text = new
+                
+                local optionLabel = Instance.new("TextLabel")
+                optionLabel.Parent = optionButton
+                optionLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                optionLabel.BackgroundTransparency = 1.000
+                optionLabel.Size = UDim2.new(1, 0, 1, 0)
+                optionLabel.Font = Enum.Font.Code
+                optionLabel.TextColor3 = Color3.fromRGB(160, 160, 160)
+                optionLabel.TextSize = 14.000
+                optionLabel.TextXAlignment = Enum.TextXAlignment.Left
+                optionLabel.Text = new
+                
+                local optionPadding = Instance.new("UIPadding")
+                optionPadding.Parent = optionLabel
+                optionPadding.PaddingLeft = UDim.new(0, 8)
+                
+                optionButton.MouseEnter:Connect(function()
+                    TweenService:Create(optionButton, TweenTable["selector"], {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}):Play()
                 end)
-
-                checkSizes()
-                selectorContainer.Size = UDim2.new(0, 394, 0, Val + AddAmount)
-                selectorTwo.Size = UDim2.new(0, 394, 0, Val + AddAmount)
-                selector.Size = UDim2.new(0, 396, 0, (Val + AddAmount) + 2)
-                selectorFrame.Size = UDim2.new(0, 396, 0, (Val + AddAmount) + 26)
-
-                UpdatePageSize()
-                checkSizes()
-                return SelectorFunctions
-            end
-            --
-            local RemoveAmount = 0
-            function SelectorFunctions:RemoveOption(option)
-                list[option] = nil
-
-                RemoveAmount = RemoveAmount + 20
-                AddAmount = AddAmount - 20
-
-                for i,v in pairs(selectorContainer:GetDescendants()) do
-                    if v:IsA("TextButton") then
-                        if v.Text == option then
-                            v:Destroy()
-                            selectorContainer.Size = UDim2.new(0, 394, 0, Val - RemoveAmount)
-                            selectorTwo.Size = UDim2.new(0, 394, 0, Val - RemoveAmount)
-                            selector.Size = UDim2.new(0, 396, 0, (Val - RemoveAmount) + 2)
-                            selectorFrame.Size = UDim2.new(0, 396, 0, (Val + 6) - 20)
+                
+                optionButton.MouseLeave:Connect(function()
+                    TweenService:Create(optionButton, TweenTable["selector"], {BackgroundColor3 = Color3.fromRGB(50, 50, 50)}):Play()
+                end)
+                
+                optionButton.MouseButton1Click:Connect(function()
+                    for _, child in pairs(selectorContainer:GetChildren()) do
+                        if child:IsA("TextButton") then
+                            local label = child:FindFirstChildOfClass("TextLabel")
+                            if label then
+                                TweenService:Create(label, TweenTable["selector"], {TextColor3 = Color3.fromRGB(160, 160, 160)}):Play()
+                            end
                         end
                     end
+                    
+                    TweenService:Create(optionLabel, TweenTable["selector"], {TextColor3 = Color3.fromRGB(159, 115, 255)}):Play()
+                    selectorText.Text = new
+                    callback(new)
+                    
+                    isExpanded = false
+                    selectorContainer.Visible = false
+                    updateContainerSize()
+                end)
+                
+                optionCount = optionCount + 1
+                if isExpanded then
+                    updateContainerSize()
                 end
-
-                if selectorText.Text == option then
-                    selectorText.Text = ". . ."
-                end
-
-                UpdatePageSize()
-                checkSizes()
+                
                 return SelectorFunctions
             end
-            --
+            
+            function SelectorFunctions:RemoveOption(option)
+                for i, child in pairs(selectorContainer:GetChildren()) do
+                    if child:IsA("TextButton") and child.Text == option then
+                        child:Destroy()
+                        optionCount = optionCount - 1
+                        break
+                    end
+                end
+                
+                if selectorText.Text == option then
+                    selectorText.Text = default
+                end
+                
+                if isExpanded then
+                    updateContainerSize()
+                end
+                
+                return SelectorFunctions
+            end
+            
             function SelectorFunctions:SetFunction(new)
                 new = new or callback
                 callback = new
                 return SelectorFunctions
             end
-            --
+            
             function SelectorFunctions:Text(new)
                 new = new or selectorLabel.Text
                 selectorLabel.Text = new
                 return SelectorFunctions
             end
-            --
+            
             function SelectorFunctions:Hide()
                 selectorFrame.Visible = false
                 return SelectorFunctions
             end
-            --
+            
             function SelectorFunctions:Show()
                 selectorFrame.Visible = true
                 return SelectorFunctions
             end
-            --
+            
             function SelectorFunctions:Remove()
                 selectorFrame:Destroy()
                 return SelectorFunctions
             end
+            
             return SelectorFunctions
         end
         --
