@@ -2059,7 +2059,7 @@ function library:Init(key)
 
         function Components:NewKeybind(text, default, callback)
             text = text or "keybind"
-            default = default or Enum.KeyCode.P
+            default = default or nil
             callback = callback or function() end
 
             local keybindFrame = Instance.new("Frame")
