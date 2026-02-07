@@ -1903,7 +1903,7 @@ function library:Init(key)
             --
             function ToggleFunctions:AddKeybind(default_t)
                 callback_t = callback
-                default_t = default_t or nil
+                default_t = default_t or Enum.KeyCode.P
                 
                 local keybind = Instance.new("TextButton")
                 local keybindCorner = Instance.new("UICorner")
@@ -1995,11 +1995,11 @@ function library:Init(key)
                 ResizeKeybind()
                 UpdatePageSize()
     
-                local ChosenKey = default_t.Name
+                local ChosenKey = default_t
     
                 local inputConnection
                 inputConnection = UserInputService.InputBegan:Connect(function(input, processed)
-                    if not processed and input.KeyCode == ChosenKey then
+                    if not processed and ChosenKey and input.KeyCode == ChosenKey then
                         ToggleFunctions:Change()
                     end
                 end)
@@ -2059,7 +2059,7 @@ function library:Init(key)
 
         function Components:NewKeybind(text, default, callback)
             text = text or "keybind"
-            default = default or nil
+            default = default or Enum.KeyCode.P
             callback = callback or function() end
 
             local keybindFrame = Instance.new("Frame")
@@ -2197,7 +2197,11 @@ function library:Init(key)
                 Return = "enter"
             }
 
-            keybindButtonLabel.Text = Shortcuts[default.Name] or default.Name
+            if default then
+                keybindButtonLabel.Text = Shortcuts[default.Name] or default.Name
+            else
+                keybindButtonLabel.Text = "None"
+            end
             CreateTween("keybind", 0.08)
             
             local NewKeybindSize = TextService:GetTextSize(keybindButtonLabel.Text, keybindButtonLabel.TextSize, keybindButtonLabel.Font, Vector2.new(math.huge,math.huge))
@@ -2250,9 +2254,13 @@ function library:Init(key)
             end
             --
             function KeybindFunctions:SetKey(new)
-                new = new or ChosenKey.Name
-                ChosenKey = new.Name
-                keybindButtonLabel.Text = new.Name
+                ChosenKey = new
+
+                if new then
+                    keybindButtonLabel.Text = Shortcuts[new.Name] or new.Name
+                else
+                    keybindButtonLabel.Text = "None"
+                end
                 return KeybindFunctions
             end
             --
